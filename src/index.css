@@ -7,3 +7,26 @@ html {
 *::before {
   box-sizing: inherit;
 }
+#tbl {
+position: relative;
+left: 25%;
+}
+#tbl table{
+    width: 50%;
+    border-collapse: collapse;
+    /*margin: 0 auto;*/
+    border-bottom: solid 1px black;
+}
+#tbl table thead{
+    text-align: left;
+}
+#tbl table thead tr{
+    border-bottom: solid 1px;
+    cursor: pointer;
+}
+#tbl table tbody tr:nth-child(2n+1) {
+    background-color: #f0f0f0;
+}
+#tbl table tr td,th{
+    padding: 5px 10px;
+}
