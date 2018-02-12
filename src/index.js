@@ -1,5 +1,5 @@
-import {data} from './data.js';
-import table from './controller/table.js';
+import data from './data';
+import table from './controller/table';
 
 const tbl = new table({
   el: document.getElementById('tbl'),
