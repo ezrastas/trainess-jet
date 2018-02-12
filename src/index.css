@@ -9,10 +9,10 @@ html {
 }
 #tbl {
 position: relative;
-left: 25%;
+left: 20%;
 }
 #tbl table{
-    width: 50%;
+    width: 60%;
     border-collapse: collapse;
     /*margin: 0 auto;*/
     border-bottom: solid 1px black;
@@ -24,9 +24,54 @@ left: 25%;
     border-bottom: solid 1px;
     cursor: pointer;
 }
+/*#tbl table thead tr th::after{
+  font-size: 10px;
+    content: "▲▼";
+}*/
 #tbl table tbody tr:nth-child(2n+1) {
-    background-color: #f0f0f0;
+    background-color: #f5f5f4;
 }
+
 #tbl table tr td,th{
     padding: 5px 10px;
+}
+
+#tbl .search,.paging {
+  width: 60%;
+  text-align: right;
+}
+
+#tbl .paging {
+  margin-top: 15px;
+}
+
+#tbl .paging span{
+  padding: 11px 15px  11px 15px;
+  margin: 1px;
+  cursor: pointer;
+}
+#tbl .paging span:hover{
+  border: solid 1px #c2c3c3;
+  padding: 10px 14px  10px 14px;
+  background-color: #f5f5f6;
+}
+#tbl .paging span.currentPage{
+  padding: 10px 14px  10px 14px;
+  border: solid 1px #c2c3c3;
+  background-color: #f5f5f6;
+}
+
+.asc::after {
+  font-size: 10px;
+  content: "▲";
+}
+
+.desc::after  {
+  content: "▼";
+  font-size: 10px;
+}
+.SortRow::after {
+  font-size: 10px;
+  color: #a0a0a2 ;
+  content: "▲▼";
 }

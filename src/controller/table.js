@@ -1,5 +1,7 @@
 'use strict';
 
+import styles from '../index.css';
+
 export default class table {
   constructor({
     el = document.createElement('div'),
@@ -10,7 +12,6 @@ export default class table {
     this.allData = data;
     this.perPage = perPage;
     this.MainEl = el;
-    console.log(this.MainEl);
     this.page = 1;
     this.NumPage = Math.ceil(this.allData.length / this.perPage);
     this.table = document.createElement('table');
@@ -18,22 +19,19 @@ export default class table {
     this.div = document.createElement('div');
     this.tbody = document.createElement('tbody');
     this.tr = document.createElement('tr');
+    this.search = document.createElement('div');
     this.paging = document.createElement('div');
-
 
     this.sortKey;
     this.flag = false;
-    //this.search = document.createElement('div');
   }
 
   init() {
     //создаём поле поиска
-
-    let search = document.createElement('div');
-
+    this.search.className = "search";
     let searchTxt = document.createElement('span');
     searchTxt.innerText = 'Search:';
-    search.appendChild(searchTxt);
+    this.search.appendChild(searchTxt);
 
     this.searchInput = document.createElement('input');
 
@@ -43,12 +41,11 @@ export default class table {
       this.SearchRequest(this.searchInput.value);
     };
 
-    search.appendChild(this.searchInput);
-    search.appendChild(searchBtn);
-    this.MainEl.appendChild(search);
+    this.search.appendChild(this.searchInput);
+    this.search.appendChild(searchBtn);
+    this.MainEl.appendChild(this.search);
 
-//создаем структуру таблицы
-
+    //создаем структуру таблицы
     // this.MainEl.appendChild(this.div);
     // this.div.appendChild(this.table);
 
@@ -59,9 +56,9 @@ export default class table {
     this.table.appendChild(this.tbody);
 
     this.MainEl.appendChild(this.paging);
+    this.paging.className = "paging";
 
-//записываем в неё данные
-
+    //записываем в неё данные
     this.renderHeader(this.headers);
     this.renderData();
   }
@@ -73,27 +70,33 @@ export default class table {
   }
 
   SortTable(item){
+    let elem = document.getElementById(item);
+    item = item.replace(/[^a-z]/g, '');
+    if ( this.flag == 0 )  {
+      elem.classList.add('desc');
+      elem.classList.remove('asc','SortRow');
+    } else {
+      elem.classList.add('asc');
+      elem.classList.remove('desc','SortRow');
+    }
     this.sortKey = item;
 
     this.allData.sort((a, b) => {
       if(this.sortKey =="id" || this.sortKey =="salary" || this.sortKey =="extn"){  //отбработка числовых значений
         const El1 = a[this.sortKey].replace(/[^-0-9]/gim,'');
         const El2 = b[this.sortKey].replace(/[^-0-9]/gim,'');
-        // return El1 - El2 ;
         return !this.flag ? (El2 - El1) : (El1 - El2);
       }else{
         const El1 = a[this.sortKey];
         const El2 = b[this.sortKey];
         if(this.flag){
-        return El1 < El2 ? -1 : El1 > El2 ? 1 : 0;
+          return El1 < El2 ? -1 : El1 > El2 ? 1 : 0;
         }else{
-        return El1 > El2 ? -1 : El1 < El2 ? 1 : 0;
-      }
+          return El1 > El2 ? -1 : El1 < El2 ? 1 : 0;
+        }
       }
     });
-
     this.renderData();
-    console.log('this.tbody.childNodes.length:',this.tbody.childNodes.length);
   }
 
   renderHeader() {
@@ -102,12 +105,13 @@ export default class table {
     th.id = item + '_' + i;
     th.dataset.sortKey = item;
 
+    //this.SortTable(th.id);
     th.onclick = () => {
       if(this.flag){
-        this.SortTable(item);
+        this.SortTable(th.id);//asc
         this.flag = 0;
       } else {
-        this.SortTable(item);
+        this.SortTable(th.id);//desc
         this.flag = 1;
       }
     };
@@ -115,6 +119,7 @@ export default class table {
     let ItemId = item.replace("_"," ");
     ItemId = ItemId[0].toUpperCase()+ ItemId.slice(1);
     th.innerText = ItemId;
+    th.classList.add('SortRow');
     this.tr.appendChild(th);
     });
   }
@@ -156,18 +161,18 @@ export default class table {
   }
 
   renderPaging(){
-         let previous = document.createElement('span');
-         previous.innerText = 'Previous';
+      let previous = document.createElement('span');
+      previous.innerText = 'Previous';
 
-         let next = document.createElement('span');
-         next.innerText = 'Next';
+      let next = document.createElement('span');
+      next.innerText = 'Next';
 
-          if (this.paging.hasChildNodes()) {
-            while (this.paging.firstChild) { //очистка предыдущего пейджинга
-
-        this.NumPage = Math.ceil(this.searchData.length / this.perPage);
-        this.paging.removeChild(this.paging.firstChild);
-      }}
+      if (this.paging.hasChildNodes()) {
+          while (this.paging.firstChild) { //очистка предыдущего пейджинга
+              this.NumPage = Math.ceil(this.searchData.length / this.perPage);
+              this.paging.removeChild(this.paging.firstChild);
+          }
+      }
 
       previous.dataset.page = Math.min(this.NumPage, this.page - 1);
       this.paging.appendChild(previous);
@@ -181,8 +186,14 @@ export default class table {
 
       next.dataset.page = Math.min(this.NumPage, this.page + 1);
       this.paging.appendChild(next);
-
       this.paging.childNodes.forEach(item => {
+
+        if (parseInt(item.dataset.page) !== this.page || this.page== this.NumPage) {
+              this.paging.childNodes[this.page].classList.add('currentPage');
+            } else {
+              this.paging.childNodes[this.page].classList.remove('currentPage');
+            }
+
         item.onclick = () => {
           this.renderData(parseInt(item.dataset.page));
         };
